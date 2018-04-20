@@ -23,7 +23,7 @@ import android.util.Log;
  */
 public class PolyApi {
   // IMPORTANT: replace this with your project's API key.
-  private static String API_KEY = "*** INSERT YOUR API KEY HERE ***";
+  private static String API_KEY = "AIzaSyBGwVXsBOMOpSGi99mIVQPCE4IjAIQPlPE";
 
   private static String TAG = "PolySample";
 

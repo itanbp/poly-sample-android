@@ -25,6 +25,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 
 /**
@@ -78,6 +80,12 @@ public class MainActivity extends Activity {
 
     // Request the asset from the Poly API.
     Log.d(TAG, "Requesting asset "+ ASSET_ID);
+
+
+    loadLocalMTL();
+
+
+    /*
     statusText.setText("Requesting...");
     PolyApi.GetAsset(ASSET_ID, backgroundThreadHandler, new AsyncHttpRequest.CompletionListener() {
       @Override
@@ -92,6 +100,9 @@ public class MainActivity extends Activity {
         handleRequestFailure(statusCode, message, exception);
       }
     });
+    */
+
+
   }
 
   @Override
@@ -193,7 +204,54 @@ public class MainActivity extends Activity {
     });
   }
 
-  // NOTE: this runs on the background thread.
+
+    private String convertStreamToString(InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
+
+
+    private void loadLocalMTL() {
+
+        try {
+
+            ObjGeometry objGeometry = null;
+            MtlLibrary mtlLibrary = new MtlLibrary();
+
+
+            InputStream objInputStream = getAssets().open("CUPIC_SUBMARINE.obj");
+            InputStream mtlInputStream = getAssets().open("CUPIC_SUBMARINE.mtl");
+
+
+            objGeometry = ObjGeometry.parse(convertStreamToString(objInputStream));
+            mtlLibrary.parseAndAdd(convertStreamToString(mtlInputStream));
+
+            ObjGeometry.Vec3 boundsCenter = objGeometry.getBoundsCenter();
+            ObjGeometry.Vec3 boundsSize = objGeometry.getBoundsSize();
+            float maxDimension = Math.max(boundsSize.x, Math.max(boundsSize.y, boundsSize.z));
+            float scale = ASSET_DISPLAY_SIZE / maxDimension;
+            ObjGeometry.Vec3 translation = new ObjGeometry.Vec3(-boundsCenter.x, -boundsCenter.y, -boundsCenter.z);
+
+            RawObject rawObject = RawObject.convertObjAndMtl(objGeometry, mtlLibrary, translation, scale);
+
+            glView.getRenderer().setRawObjectToRender(rawObject);
+
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ObjGeometry.ObjParseException e) {
+            e.printStackTrace();
+        } catch (MtlLibrary.MtlParseException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+
+    // NOTE: this runs on the background thread.
   private void processDataFiles() {
     Log.d(TAG, "All data files downloaded.");
     // At this point, all the necessary data files are downloaded in fileDownloader, so what
