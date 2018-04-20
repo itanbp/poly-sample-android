@@ -47,7 +47,7 @@ public class MainActivity extends Activity {
 
   // The size we want to scale the asset to, for display. This size guarantees that no matter
   // how big or small the asset is, we will scale it to a reasonable size for viewing.
-  private static final float ASSET_DISPLAY_SIZE = 5;
+  private static final float ASSET_DISPLAY_SIZE = 10;
 
   // The GLSurfaceView that renders the object.
   private MyGLSurfaceView glView;
@@ -219,8 +219,8 @@ public class MainActivity extends Activity {
             MtlLibrary mtlLibrary = new MtlLibrary();
 
 
-            InputStream objInputStream = getAssets().open("CUPIC_SUBMARINE.obj");
-            InputStream mtlInputStream = getAssets().open("CUPIC_SUBMARINE.mtl");
+            InputStream objInputStream = getAssets().open("Poodle_01.obj");
+            InputStream mtlInputStream = getAssets().open("Poodle_01.mtl");
 
 
             objGeometry = ObjGeometry.parse(convertStreamToString(objInputStream));
